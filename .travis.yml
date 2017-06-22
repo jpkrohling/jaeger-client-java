@@ -23,6 +23,10 @@ env:
   - secure: vpUA6xhESmKFQ/nhsrflT6L6s787OEbyGWrDzozoACwym1sXnDVAXv5K87Pn235ci1fBR3lfM1EbtZP/p5F02fqwJv+bf2b+zEYSnk4dcCl2d8Thr1fQQHsiE0u8dycZH/QZdAMfDP+rBBC+bvFgmw5XTGWCdSiDOC7efyw1CrIS5uQLRE7WZiG2ptgyHpkVo2KXu6E6NIpsqBg8DvbidrinqthRE5+Ab3BMj31+UD7zwRCQb6CRejGzi+O89A/UjCqrk24W25ZUcSBLNgCl6PNMf0aC/1qWmOSTWKAje9y0G/4SDzMSLGlYAs0V5Hkwzk2pM7lwSi5xmpvGYNP6l4LZprLgqdQGOMzuY7nGzfHZ2uN5gO2gEB5peYEl4lDQ6rhqhfmS0BSH7RXij5G+W5bUjybQ3zHrZM5gszzG8LZ4LBN7kOUimcqR+5i61hvisWYakDj2FLVZWMf+e+XYnL1xQbtYjR4kGdnv/PM0CvPzj5TG7LauNRcPphGE8QzDU53VUrG7LmZbz/fg5eW6b38CQLo4IJ/fYuBBOnDNnqVRxQSYyXWpvLpEy2bgrafA+qN67GAmCkMcwnBSCN0RDMchaFK3ZcC6Hrp5g1kUwgAhbwZoso06UH0tdzM+CfofvPoA3R40gwVlKmIo2wpNk0uLE0I+BAsVdikDHl4yRQ0=
   # DOCKER_PASSWORD
   - secure: pyqayEIpKwMX+D1Z61vuPbLk0X2EcD4qZY9HzyCSarXeglOoVR3o2AXeP5d+L7nLwjC5UJzE1MzvWsBl5a0sSVy5bWpRr5HxFE7VvlgDYWPcug1D6q1Dig9c37bPBqn3mZlrlaZfhJoA7wdIMitSUGLwZNmJ9sfKlWtc7FsZfiNHoofpeqB7dPJp7hM2I6FI7q0reB9+5cXmvivTrkU7FS3mSgTBhGKy9zm4tyc3OBP1mtdtUP/AmZ6CJYQMeuC8+q4kZl8SpJdFz16HIajoWdxEHuxDDClcGyqe0+cXZcfjq8s9bVxJxHgLAfx/MDfNfZ33jySEtXeUSuZ0DQYqE8CTJWwUPtulWKdfd5UoKQTWy1uQ431vD1EdMrdtgeDJIUgOU3wmsbqF8NQRp6h1qBTVIYUt/2snLN2/4Hf+LKhHe9R28JnjqpaW6dOedWkEXaYdXuHJiSno+/RRSngT/rmYRwbLJ+V+cjP++yvYUnN4rjFIZIu7dK0sp4V/7Z5nssMGcf4xLU2UAnQ7xTo/QFkh++hEGnJmS06V4SBAREBk2VNqZBDecGvvznG+zTSBPyMfv+V5k2+TLErXHHiY5FOw6FCryisNBADTdVWHM4AqwNp5K63lPsUvhdd1sY/mqL4P4Lq3XNQvXXJZIf4nWLGbqzN0+DZx/97TwIcofsw=
+  # SIGNING_KEY_ID
+  - secure: lVS7/tiVUjNAhjIS5kSx0vIGJP6JLi6PGHBgHyPvgj4/3SoxJeJ07HKyMmP6oLjvUzDOQZ7fn4VuEb3NOg4rJI5vbKSVw0w2qXTDaiJUSEtLRWgUV1II7hhPXf18ikXcgiCDWv8IMlEUq/7VLyiqyLfgxe457GfUBW+HFjg/BkCHzIveilxU9IAE2vGVB46g4tBl4wSXkY9mCpZVsQHcNdJ2UIzXizWMpMiC138MW+bm3jSug2OnWTL4Bm8alv1r3drRQiIyd3VbkUMKEFWV4NpMZvx8cI4Z54ePi9wmqGn67dcFjjfWroJ9NOK58SQcWMJc5NxI6Y4EdYU3DUZ/vfgSaDgFGbfL1+tIvgllqLuwfnTXM5wx1UDLHx9KbzveHG+JIvfLbIHsKIzAVHoyFo+ZQ3suEu3CL/75mjijnoHJ/sQhqeLeDIFwan+AdKlfofJ/Ztq7rqPysGu4SzYxs3m0pKEPuGnjXVDLAa4HUFz5inI+4Q34Mdr5Plm9E0Ka71PBMxsW92IbVTYCKASLvyGbHPpAFUSBeRtT/wYaKlOxvFJ7fARD//wRAlelD/41IzarwaXtbtVS8TvJ9vQWhbHDx/ssPTify+5zMzJ9QboiUjpcOlN1bhRJ1oi6OrgacH4do+yhWJyar2f+djomWDJ6uvsKqep3T+CjB945EFA=
+  # SIGNING_KEY_PASSPHRASE
+  - secure: T5pS+mGSBMntcRvwYU1YZoCiJbBgyPzl67UKa2ivyFeRxd7s+v4UZgdCKxCtvj6HlHjePf0gKBEPq/QrDMNwculzRQ2yuMxS6FVm/MUCcjt8sAnxMsPYLJpHNXTHwPSzHWEQ+iC8GeoZQ17C+SJtYj+wruXSlh/NeL9Ni5dzD3NcpA/WCi7kiWUWlIjKVkseZdHWOS+jBcvbLq9NxzLlES26KzPgB7Pk5PARAKjhbzEr5BDNgOk8K1sX1OskiFlFM5W9QX+cW2kfG9aMm5FfAfA1UjwEWhWYq2R7nTC/MuYhNLwgGV25h2rj6l52ys9B9VpdmXCawXRBmZrTYxHKAc30nNvEtr+4lh4b3ywIh6gm1D0Jvh+LLVeOKDaTPxN3SrmtUN/ORp+4oaF7/qzTqOXCpUO7zdNHl7PKAaCgOKwmedWFZyeDuOeEStGWp/2/RTjEdzozfdiMRrtI3q61uslYyNLMTdQ97cb7FtBlmsljkkgFWMZg2/k5VdWNuaTWGCrpo53IaAauRQBtVmM6KNgL3J97qkKUQr3gDW7ADd0Zy5cStPtybSuk50Rc6rb1cTA0BzkQPWAVGzy4mVeG00m6OuR2Gje0ceidydW0ELoV368e10RJPSlXyZ89aLNbGVk1l64c6/YR/D1dYK7bLc3I/j5e3pnWbkMKI5wsMxc=
 before_cache:
 - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
 cache:
@@ -30,6 +34,8 @@ cache:
   - "$HOME/.gradle/caches/"
   - "$HOME/.gradle/wrapper/"
 before_install:
+- openssl aes-256-cbc -K $encrypted_677f232983c0_key -iv $encrypted_677f232983c0_iv
+  -in signing-key.asc.enc -out signing-key.asc -d
 - if [ "$CROSSDOCK" == true ]; then bash ./travis/install-crossdock-deps.sh ; fi
 - sudo rm -rf /usr/local/bin/thrift
 - sudo cp travis/docker-thrift/thrift /usr/local/bin/
@@ -41,5 +47,4 @@ script:
   crossdock'; fi
 after_success:
 - if [ "$COVERAGE" == true ]; then bash <(curl -s https://codecov.io/bash) ; fi
-- if [ "$CROSSDOCK" == true ]; then ./gradlew uploadArchives -PossrhUsername="${SONATYPE_USERNAME}"
-  -PossrhPassword="${SONATYPE_PASSWORD}" ; fi
+- if [ "$CROSSDOCK" == true ]; then ./release.sh ; fi
