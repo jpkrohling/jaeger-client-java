@@ -31,7 +31,7 @@ allprojects {
     apply plugin: 'jacoco'
 
     group = 'com.uber.jaeger'
-    version = '0.20.0-SNAPSHOT'
+    version = System.env.TRAVIS_TAG ? System.env.TRAVIS_TAG : '0.20.0-SNAPSHOT'
 
     repositories {
         mavenCentral()
@@ -139,6 +139,12 @@ task codeCoverageReport(type: JacocoReport, group: 'Coverage reports') {
                               '**/thriftjava/**',
                     ])
         })
+    }
+}
+
+task printVersion {
+    doLast {
+        println project.version
     }
 }
 
