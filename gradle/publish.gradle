@@ -28,13 +28,13 @@ uploadArchives {
             pom.project {
                 name 'jaeger-client'
                 packaging 'jar'
-                description 'Jaeger Java bindings for OpenTracing API'
-                url 'https://github.com/uber/jaeger-client-java'
+                description 'Jaeger Bindings for Java OpenTracing API'
+                url 'https://github.com/jaegertracing/jaeger-client-java'
 
                 scm {
-                    connection 'scm:git:git@github.com:uber/jaeger-client-java.git'
-                    developerConnection 'scm:git:git@github.com:uber/jaeger-client-java.git'
-                    url 'git@github.com:uber/jaeger-client-java.git'
+                    connection 'scm:git:git@github.com:jaegertracing/jaeger-client-java.git'
+                    developerConnection 'scm:git:git@github.com:jaegertracing/jaeger-client-java.git'
+                    url 'git@github.com:jaegertracing/jaeger-client-java.git'
                 }
 
                 licenses {

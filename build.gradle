@@ -40,7 +40,7 @@ allprojects {
     apply plugin: 'idea' // intellij support
     apply plugin: 'jacoco'
 
-    group = 'com.uber.jaeger'
+    group = 'io.jaegertracing'
     version = getVersionForBuild()
 
     repositories {
@@ -77,7 +77,7 @@ subprojects {
 
     if (!version.endsWith("SNAPSHOT")) {
         nexusStaging {
-            packageGroup = "com.uber"
+            packageGroup = "io.jaegertracing"
             username = ossrhUsername
             password = ossrhPassword
             // Dealing with error "Wrong number of received repositories in state 'open'" (http://bit.ly/2ybracm)
