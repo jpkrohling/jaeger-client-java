@@ -28,6 +28,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class MicrometerStatsReporter implements StatsReporter {
 
   MeterRegistry registry() {
@@ -36,20 +39,24 @@ public class MicrometerStatsReporter implements StatsReporter {
 
   @Override
   public void incCounter(String name, long delta, Map<String, String> tags) {
+    log.trace("Incrementing counter {}", name);
     counter(name, translateTags(tags)).increment(delta);
   }
 
   @Override
   public void recordTimer(String name, long time, Map<String, String> tags) {
+    log.trace("Recording timer {}: {}ms", name, time);
     timer(name, translateTags(tags)).record(time, TimeUnit.MICROSECONDS);
   }
 
   @Override
   public void updateGauge(String name, long amount, Map<String, String> tags) {
+    log.trace("Updating gauge {}", name);
     gauge(name, translateTags(tags), amount);
   }
 
   private Iterable<Tag> translateTags(Map<String, String> tags) {
+    log.trace("Translating tags");
     List<Tag> tagList = new ArrayList<Tag>(tags.size());
     for (Map.Entry<String, String> tag : tags.entrySet()) {
       tagList.add(new ImmutableTag(tag.getKey(), tag.getValue()));

@@ -80,10 +80,12 @@ public class Metrics {
 
     SortedSet<String> sortedKeys = new TreeSet<String>(tags.keySet());
     for (String key : sortedKeys) {
-      sb.append(".");
-      sb.append(key);
-      sb.append("=");
-      sb.append(tags.get(key));
+      if (!tags.get(key).isEmpty()) {
+        sb.append(".");
+        sb.append(key);
+        sb.append("=");
+        sb.append(tags.get(key));
+      }
     }
     return sb.toString();
   }
@@ -94,56 +96,104 @@ public class Metrics {
 
   @Metric(
       name = "traces",
-      tags = {@Tag(key = "state", value = "started"), @Tag(key = "sampled", value = "y")}
+      tags = {
+        @Tag(key = "state", value = "started"),
+        @Tag(key = "sampled", value = "y"),
+        @Tag(key = "group"),
+        @Tag(key = "phase"),
+        @Tag(key = "result"),
+      }
   )
   // Number of traces started by this tracer as sampled
   public Counter traceStartedSampled;
 
   @Metric(
       name = "traces",
-      tags = {@Tag(key = "state", value = "started"), @Tag(key = "sampled", value = "n")}
+      tags = {
+        @Tag(key = "state", value = "started"),
+        @Tag(key = "sampled", value = "n"),
+        @Tag(key = "group"),
+        @Tag(key = "phase"),
+        @Tag(key = "result"),
+      }
   )
   // Number of traces started by this tracer as not sampled
   public Counter traceStartedNotSampled;
 
   @Metric(
       name = "traces",
-      tags = {@Tag(key = "state", value = "joined"), @Tag(key = "sampled", value = "y")}
+      tags = {
+        @Tag(key = "state", value = "joined"),
+        @Tag(key = "sampled", value = "y"),
+        @Tag(key = "group"),
+        @Tag(key = "phase"),
+        @Tag(key = "result"),
+      }
   )
   // Number of externally started sampled traces this tracer joined
   public Counter tracesJoinedSampled;
 
   @Metric(
       name = "traces",
-      tags = {@Tag(key = "state", value = "joined"), @Tag(key = "sampled", value = "n")}
+      tags = {
+        @Tag(key = "state", value = "joined"),
+        @Tag(key = "sampled", value = "n"),
+        @Tag(key = "group"),
+        @Tag(key = "phase"),
+        @Tag(key = "result"),
+      }
   )
   // Number of externally started not-sampled traces this tracer joined
   public Counter tracesJoinedNotSampled;
 
   @Metric(
       name = "spans",
-      tags = {@Tag(key = "state", value = "started"), @Tag(key = "group", value = "lifecycle")}
+      tags = {
+        @Tag(key = "state", value = "started"),
+        @Tag(key = "sampled"),
+        @Tag(key = "group", value = "lifecycle"),
+        @Tag(key = "phase"),
+        @Tag(key = "result"),
+      }
   )
   // Number of sampled spans started by this tracer
   public Counter spansStarted;
 
   @Metric(
       name = "spans",
-      tags = {@Tag(key = "state", value = "finished"), @Tag(key = "group", value = "lifecycle")}
+      tags = {
+        @Tag(key = "state", value = "finished"),
+        @Tag(key = "sampled"),
+        @Tag(key = "group", value = "lifecycle"),
+        @Tag(key = "phase"),
+        @Tag(key = "result"),
+      }
   )
   // Number of sampled spans started by this tracer
   public Counter spansFinished;
 
   @Metric(
       name = "spans",
-      tags = {@Tag(key = "group", value = "sampling"), @Tag(key = "sampled", value = "y")}
+      tags = {
+        @Tag(key = "state"),
+        @Tag(key = "sampled", value = "y"),
+        @Tag(key = "group", value = "sampling"),
+        @Tag(key = "phase"),
+        @Tag(key = "result"),
+      }
   )
   // Number of sampled spans started by this tracer
   public Counter spansSampled;
 
   @Metric(
       name = "spans",
-      tags = {@Tag(key = "group", value = "sampling"), @Tag(key = "sampled", value = "n")}
+      tags = {
+        @Tag(key = "state"),
+        @Tag(key = "sampled", value = "n"),
+        @Tag(key = "group", value = "sampling"),
+        @Tag(key = "phase"),
+        @Tag(key = "result"),
+      }
   )
   // Number of not-sampled spans started by this tracer
   public Counter spansNotSampled;
@@ -154,21 +204,39 @@ public class Metrics {
 
   @Metric(
       name = "reporter-spans",
-      tags = {@Tag(key = "state", value = "success")}
+      tags = {
+        @Tag(key = "state", value = "success"),
+        @Tag(key = "sampled"),
+        @Tag(key = "group"),
+        @Tag(key = "phase"),
+        @Tag(key = "result"),
+      }
   )
   // Number of spans successfully reported
   public Counter reporterSuccess;
 
   @Metric(
       name = "reporter-spans",
-      tags = {@Tag(key = "state", value = "failure")}
+      tags = {
+        @Tag(key = "state", value = "failure"),
+        @Tag(key = "sampled"),
+        @Tag(key = "group"),
+        @Tag(key = "phase"),
+        @Tag(key = "result"),
+      }
   )
   // Number of spans in failed attempts to report
   public Counter reporterFailure;
 
   @Metric(
       name = "spans",
-      tags = {@Tag(key = "state", value = "dropped")}
+      tags = {
+        @Tag(key = "state", value = "dropped"),
+        @Tag(key = "sampled"),
+        @Tag(key = "group"),
+        @Tag(key = "phase"),
+        @Tag(key = "result"),
+      }
   )
   // Number of spans dropped due to internal queue overflow
   public Counter reporterDropped;
@@ -179,35 +247,65 @@ public class Metrics {
 
   @Metric(
       name = "sampler",
-      tags = {@Tag(key = "state", value = "retrieved")}
+      tags = {
+        @Tag(key = "state", value = "retrieved"),
+        @Tag(key = "sampled"),
+        @Tag(key = "group"),
+        @Tag(key = "phase"),
+        @Tag(key = "result"),
+      }
   )
   // Number of times the Sampler succeeded to retrieve samping strategy
   public Counter samplerRetrieved;
 
   @Metric(
       name = "sampler",
-      tags = {@Tag(key = "state", value = "updated")}
+      tags = {
+        @Tag(key = "state", value = "updated"),
+        @Tag(key = "sampled"),
+        @Tag(key = "group"),
+        @Tag(key = "phase"),
+        @Tag(key = "result"),
+      }
   )
   // Number of times the Sampler succeeded to retrieve and updateGauge sampling strategy
   public Counter samplerUpdated;
 
   @Metric(
       name = "sampler",
-      tags = {@Tag(key = "state", value = "failure"), @Tag(key = "phase", value = "query")}
+      tags = {
+        @Tag(key = "state", value = "failure"),
+        @Tag(key = "sampled"),
+        @Tag(key = "group"),
+        @Tag(key = "phase", value = "query"),
+        @Tag(key = "result"),
+      }
   )
   // Number of times the Sampler failed to retrieve the sampling strategy
   public Counter samplerQueryFailure;
 
   @Metric(
       name = "sampler",
-      tags = {@Tag(key = "state", value = "failure"), @Tag(key = "phase", value = "parsing")}
+      tags = {
+        @Tag(key = "state", value = "failure"),
+        @Tag(key = "sampled"),
+        @Tag(key = "group"),
+        @Tag(key = "phase", value = "parsing"),
+        @Tag(key = "result"),
+      }
   )
   // Number of times the Sampler failed to parse retrieved sampling strategy
   public Counter samplerParsingFailure;
 
   @Metric(
       name = "baggage-update",
-      tags = {@Tag(key = "result", value = "ok")}
+      tags = {
+        @Tag(key = "state"),
+        @Tag(key = "sampled"),
+        @Tag(key = "group"),
+        @Tag(key = "phase"),
+        @Tag(key = "result", value = "ok"),
+      }
   )
   // Number of times baggage was successfully written or updated on spans
   public Counter baggageUpdateSuccess;
@@ -225,14 +323,26 @@ public class Metrics {
 
   @Metric(
       name = "baggage-restrictions-update",
-      tags = {@Tag(key = "result", value = "ok")}
+      tags = {
+        @Tag(key = "state"),
+        @Tag(key = "sampled"),
+        @Tag(key = "group"),
+        @Tag(key = "phase"),
+        @Tag(key = "result", value = "ok"),
+      }
   )
   // Number of times baggage restrictions were successfully updated
   public Counter baggageRestrictionsUpdateSuccess;
 
   @Metric(
       name = "baggage-restrictions-update",
-      tags = {@Tag(key = "result", value = "err")}
+      tags = {
+        @Tag(key = "state"),
+        @Tag(key = "sampled"),
+        @Tag(key = "group"),
+        @Tag(key = "phase"),
+        @Tag(key = "result", value = "err"),
+      }
   )
   // Number of times baggage restrictions failed to update
   public Counter baggageRestrictionsUpdateFailure;
