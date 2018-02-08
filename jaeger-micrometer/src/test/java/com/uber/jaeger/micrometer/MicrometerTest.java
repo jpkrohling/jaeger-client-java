@@ -12,14 +12,14 @@
  * the License.
  */
 
-package com.uber.jaeger.metrics;
+package com.uber.jaeger.micrometer;
 
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import com.uber.jaeger.metrics.Metrics;
 import io.micrometer.prometheus.PrometheusConfig;
 import io.micrometer.prometheus.PrometheusMeterRegistry;
-
 import org.hamcrest.core.IsEqual;
 import org.junit.After;
 import org.junit.Before;

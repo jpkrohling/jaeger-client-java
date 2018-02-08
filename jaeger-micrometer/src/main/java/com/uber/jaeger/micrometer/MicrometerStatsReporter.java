@@ -12,12 +12,13 @@
  * the License.
  */
 
-package com.uber.jaeger.metrics;
+package com.uber.jaeger.micrometer;
 
 import static io.micrometer.core.instrument.Metrics.counter;
 import static io.micrometer.core.instrument.Metrics.gauge;
 import static io.micrometer.core.instrument.Metrics.timer;
 
+import com.uber.jaeger.metrics.StatsReporter;
 import io.micrometer.core.instrument.ImmutableTag;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Metrics;
