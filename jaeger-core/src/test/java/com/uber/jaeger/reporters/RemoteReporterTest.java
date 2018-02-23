@@ -19,26 +19,22 @@ import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import com.uber.jaeger.Span;
 import com.uber.jaeger.Tracer;
 import com.uber.jaeger.exceptions.SenderException;
-import com.uber.jaeger.metrics.InMemoryStatsReporter;
+import com.uber.jaeger.metrics.InMemoryMetricsFactory;
 import com.uber.jaeger.metrics.Metrics;
-import com.uber.jaeger.metrics.StatsFactoryImpl;
 import com.uber.jaeger.samplers.ConstSampler;
 import com.uber.jaeger.senders.Sender;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -50,18 +46,18 @@ public class RemoteReporterTest {
   private final int flushInterval = 1000; // in milliseconds
   private final int maxQueueSize = 500;
   private Metrics metrics;
-  InMemoryStatsReporter metricsReporter;
+  private InMemoryMetricsFactory metricsFactory;
 
   @Before
   public void setUp() throws Exception {
-    metricsReporter = new InMemoryStatsReporter();
-    metrics = new Metrics(new StatsFactoryImpl(metricsReporter));
+    metricsFactory = new InMemoryMetricsFactory();
+    metrics = new Metrics(metricsFactory);
 
     sender = new InMemorySender();
     reporter = new RemoteReporter(sender, flushInterval, maxQueueSize, metrics);
     tracer =
         new Tracer.Builder("test-remote-reporter", reporter, new ConstSampler(true))
-            .withStatsReporter(metricsReporter)
+            .withMetrics(metrics)
             .build();
   }
 
@@ -93,12 +89,9 @@ public class RemoteReporterTest {
     assertEquals(0, sender.getAppended().size());
     assertEquals(numberOfSpans, sender.getFlushed().size());
 
-    assertEquals(
-        100L, metricsReporter.counters.get("jaeger:started_spans.sampled=y").longValue());
-    assertEquals(
-        100L, metricsReporter.counters.get("jaeger:reporter_spans.result=ok").longValue());
-    assertEquals(
-        100L, metricsReporter.counters.get("jaeger:traces.sampled=y.state=started").longValue());
+    assertEquals(100, metricsFactory.getCounter("jaeger:started_spans.sampled=y"));
+    assertEquals(100, metricsFactory.getCounter("jaeger:reporter_spans.result=ok"));
+    assertEquals(100, metricsFactory.getCounter("jaeger:traces.sampled=y.state=started"));
   }
 
   @Test
@@ -169,7 +162,7 @@ public class RemoteReporterTest {
     reporter.report(newSpan());
 
     // Then: one or both spans should be dropped
-    Long droppedCount = metricsReporter.counters.get("jaeger:reporter_spans.result=dropped");
+    long droppedCount = metricsFactory.getCounter("jaeger:reporter_spans.result=dropped");
     assertThat(droppedCount, anyOf(equalTo(1L), equalTo(2L)));
   }
 
@@ -179,7 +172,7 @@ public class RemoteReporterTest {
     int closeTimeoutMillis = 5;
     reporter = new RemoteReporter(sender, Integer.MAX_VALUE, maxQueueSize, closeTimeoutMillis, metrics);
     tracer = new Tracer.Builder("test-remote-reporter", reporter, new ConstSampler(true))
-        .withStatsReporter(metricsReporter)
+        .withMetrics(metrics)
         .build();
     // change sender to blocking mode
     sender.permitAppend(0);
@@ -214,7 +207,7 @@ public class RemoteReporterTest {
     int neverFlushInterval = Integer.MAX_VALUE;
     reporter = new RemoteReporter(sender, neverFlushInterval, maxQueueSize, metrics);
     tracer = new Tracer.Builder("test-remote-reporter", reporter, new ConstSampler(true))
-        .withStatsReporter(metricsReporter)
+        .withMetrics(metrics)
         .build();
 
     // change sender to blocking mode
@@ -224,12 +217,12 @@ public class RemoteReporterTest {
       reporter.report(newSpan());
     }
 
-    assertNull(metricsReporter.gauges.get("jaeger:reporter_queue_length"));
+    assertEquals(0, metricsFactory.getGauge("jaeger:reporter_queue_length"));
 
     RemoteReporter remoteReporter = (RemoteReporter) reporter;
     remoteReporter.flush();
 
-    assertTrue(metricsReporter.gauges.get("jaeger:reporter_queue_length") > 0);
+    assertTrue(metricsFactory.getGauge("jaeger:reporter_queue_length") > 0);
   }
 
   @Test
@@ -247,7 +240,7 @@ public class RemoteReporterTest {
     reporter = new RemoteReporter(sender, flushInterval, maxQueueSize, metrics);
     tracer =
           new Tracer.Builder("test-remote-reporter", reporter, new ConstSampler(true))
-                .withStatsReporter(metricsReporter)
+                .withMetrics(metrics)
                 .build();
 
     tracer.buildSpan("mySpan").start().finish();

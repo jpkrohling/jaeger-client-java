@@ -19,7 +19,8 @@ import com.uber.jaeger.baggage.BaggageSetter;
 import com.uber.jaeger.baggage.DefaultBaggageRestrictionManager;
 import com.uber.jaeger.exceptions.UnsupportedFormatException;
 import com.uber.jaeger.metrics.Metrics;
-import com.uber.jaeger.metrics.NullStatsReporter;
+import com.uber.jaeger.metrics.MetricsFactory;
+import com.uber.jaeger.metrics.NoopMetricsFactory;
 import com.uber.jaeger.metrics.StatsFactoryImpl;
 import com.uber.jaeger.metrics.StatsReporter;
 import com.uber.jaeger.propagation.Extractor;
@@ -31,14 +32,12 @@ import com.uber.jaeger.samplers.SamplingStatus;
 import com.uber.jaeger.utils.Clock;
 import com.uber.jaeger.utils.SystemClock;
 import com.uber.jaeger.utils.Utils;
-
 import io.opentracing.References;
 import io.opentracing.Scope;
 import io.opentracing.ScopeManager;
 import io.opentracing.propagation.Format;
 import io.opentracing.tag.Tags;
 import io.opentracing.util.ThreadLocalScopeManager;
-
 import java.io.Closeable;
 import java.io.InputStream;
 import java.net.Inet4Address;
@@ -440,7 +439,7 @@ public class Tracer implements io.opentracing.Tracer, Closeable {
     private final Sampler sampler;
     private final Reporter reporter;
     private final PropagationRegistry registry = new PropagationRegistry();
-    private Metrics metrics = new Metrics(new StatsFactoryImpl(new NullStatsReporter()));
+    private Metrics metrics = new Metrics(new NoopMetricsFactory());
     private String serviceName;
     private Clock clock = new SystemClock();
     private Map<String, Object> tags = new HashMap<String, Object>();
@@ -475,8 +474,22 @@ public class Tracer implements io.opentracing.Tracer, Closeable {
       return this;
     }
 
+    /**
+     * @deprecated Use {@link #withMetricsFactory(MetricsFactory)} instead
+     */
+    @Deprecated
     public Builder withStatsReporter(StatsReporter statsReporter) {
       this.metrics = new Metrics(new StatsFactoryImpl(statsReporter));
+      return this;
+    }
+
+    /**
+     * Creates a new {@link Metrics} to be used with the tracer, backed by the given {@link MetricsFactory}
+     * @param metricsFactory the metrics factory to use
+     * @return this instance of the builder
+     */
+    public Builder withMetricsFactory(MetricsFactory metricsFactory) {
+      this.metrics = new Metrics(metricsFactory);
       return this;
     }
 

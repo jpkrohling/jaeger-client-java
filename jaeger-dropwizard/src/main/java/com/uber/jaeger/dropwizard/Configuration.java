@@ -47,6 +47,6 @@ public class Configuration extends com.uber.jaeger.Configuration {
   }
 
   public void setMetricRegistry(MetricRegistry metricRegistry) {
-    setStatsFactory(new StatsFactory(metricRegistry));
+    setMetricsFactory(new StatsFactory(metricRegistry));
   }
 }
