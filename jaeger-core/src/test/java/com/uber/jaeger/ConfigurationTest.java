@@ -23,6 +23,7 @@ import static org.junit.Assert.fail;
 
 import com.uber.jaeger.Configuration.ReporterConfiguration;
 import com.uber.jaeger.Configuration.SamplerConfiguration;
+import com.uber.jaeger.metrics.MockMetricsFactory;
 import com.uber.jaeger.samplers.ConstSampler;
 
 import com.uber.jaeger.senders.HttpSender;
@@ -65,6 +66,7 @@ public class ConfigurationTest {
     System.clearProperty(Configuration.JAEGER_USER);
     System.clearProperty(Configuration.JAEGER_PASSWORD);
     System.clearProperty(Configuration.JAEGER_PROPAGATION);
+    System.clearProperty(Configuration.JAEGER_SKIP_METRICS_FACTORY_LOADER);
 
     System.clearProperty(TEST_PROPERTY);
 
@@ -318,6 +320,39 @@ public class ConfigurationTest {
 
     // Check that jaeger context still available even though invalid format specified
     assertNotNull(textMap.get("uber-trace-id"));
+  }
+
+  @Test
+  public void testMetricsFactoryFromServiceLoader() {
+    System.setProperty(Configuration.JAEGER_SERVICE_NAME, "Test");
+
+    int instances = MockMetricsFactory.instances.size();
+    Configuration.fromEnv().getTracer();
+    assertEquals(++instances, MockMetricsFactory.instances.size());
+  }
+
+  @Test
+  public void testSkipMetricsFactoryFromServiceLoader() {
+    System.setProperty(Configuration.JAEGER_SERVICE_NAME, "Test");
+    System.setProperty(Configuration.JAEGER_SKIP_METRICS_FACTORY_LOADER, "true");
+
+    int instances = MockMetricsFactory.instances.size();
+    Configuration.fromEnv().getTracer();
+    System.clearProperty(Configuration.JAEGER_SKIP_METRICS_FACTORY_LOADER);
+
+    assertEquals(instances, MockMetricsFactory.instances.size());
+  }
+
+  @Test
+  public void testDoNotSkipMetricsFactoryFromServiceLoader() {
+    System.setProperty(Configuration.JAEGER_SERVICE_NAME, "Test");
+    System.setProperty(Configuration.JAEGER_SKIP_METRICS_FACTORY_LOADER, "false");
+
+    int instances = MockMetricsFactory.instances.size();
+    Configuration.fromEnv().getTracer();
+    System.clearProperty(Configuration.JAEGER_SKIP_METRICS_FACTORY_LOADER);
+
+    assertEquals(++instances, MockMetricsFactory.instances.size());
   }
 
   static class TestTextMap implements TextMap {

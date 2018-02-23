@@ -43,9 +43,11 @@ import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.ServiceLoader;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Credentials;
@@ -139,6 +141,11 @@ public class Configuration {
   public static final String JAEGER_PROPAGATION = JAEGER_PREFIX + "PROPAGATION";
 
   /**
+   * Whether to skip loading a metrics factory from the classpath. Boolean. Optional.
+   */
+  public static final String JAEGER_SKIP_METRICS_FACTORY_LOADER = JAEGER_PREFIX + "SKIP_METRICS_FACTORY_LOADER";
+
+  /**
    * The supported trace context propagation formats.
    */
   public enum Propagation {
@@ -209,7 +216,22 @@ public class Configuration {
     }
     this.codecConfig = codecConfig;
 
-    metricsFactory = new NoopMetricsFactory();
+    metricsFactory = loadMetricsFactory();
+  }
+
+  private MetricsFactory loadMetricsFactory() {
+    if (!getPropertyAsBool(JAEGER_SKIP_METRICS_FACTORY_LOADER)) {
+      ServiceLoader<MetricsFactory> loader = ServiceLoader.load(MetricsFactory.class);
+
+      Iterator<MetricsFactory> iterator = loader.iterator();
+      if (iterator.hasNext()) {
+        MetricsFactory metricsFactory = iterator.next();
+        log.info("Found a Metrics Factory service: {}", metricsFactory.getClass());
+        return metricsFactory;
+      }
+    }
+
+    return new NoopMetricsFactory();
   }
 
   public static Configuration fromEnv() {
