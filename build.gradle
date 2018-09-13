@@ -11,11 +11,10 @@ plugins {
     id "com.github.johnrengelman.shadow" version "2.0.4"
     id "net.ltgt.errorprone" version "0.0.14"
     id 'ru.vyarus.animalsniffer' version '1.4.3'
-    id 'io.codearte.nexus-staging' version '0.11.0'
     id 'com.github.ben-manes.versions' version '0.17.0'
+    id "com.jfrog.artifactory" version "4.8.1"
+    id "com.jfrog.bintray" version "1.8.4"
 }
-
-ext.developmentVersion = getProperty('developmentVersion','0.32.1-SNAPSHOT')
 
 ext.opentracingVersion = getProperty('opentracingVersion','0.31.0')
 ext.guavaVersion = getProperty('guavaVersion','18.0')
@@ -34,10 +33,8 @@ ext.junitDataProviderVersion = '1.13.1'
 ext.awaitilityVersion = '3.0.0'
 ext.logbackVersion = '1.2.3'
 
-ext.skipSigning = project.hasProperty('skipSigning') && skipSigning.toBoolean()
-
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.0'
+    gradleVersion = '4.10.2'
 }
 
 allprojects {
@@ -45,7 +42,7 @@ allprojects {
     apply plugin: 'jacoco'
 
     group = 'io.jaegertracing'
-    version = getVersionForBuild()
+    version = currentVersion
 
     repositories {
         mavenLocal()
@@ -58,9 +55,10 @@ subprojects {
     apply plugin: 'com.github.hierynomus.license'
     apply plugin: 'java'
     apply plugin: 'maven'
-    apply plugin: 'signing'
     apply plugin: 'checkstyle'
-
+    apply plugin: 'maven-publish'
+    apply plugin: "com.jfrog.artifactory"
+    apply plugin: 'com.jfrog.bintray'
 
     compileJava {
         sourceCompatibility = 1.6
@@ -74,19 +72,6 @@ subprojects {
 
     jar {
         from sourceSets.main.output
-    }
-
-    if (!version.endsWith("SNAPSHOT")) {
-        nexusStaging {
-            packageGroup = "io.jaegertracing"
-            username = ossrhUsername
-            password = ossrhPassword
-            // Dealing with error "Wrong number of received repositories in state 'open'" (http://bit.ly/2ybracm)
-            numberOfRetries = 50
-            delayBetweenRetriesInMillis = 3000
-        }
-
-        uploadArchives.finalizedBy closeAndReleaseRepository
     }
 
     animalsniffer {
@@ -144,10 +129,6 @@ subprojects {
         compileOnly 'org.projectlombok:lombok:1.18.2'
         compileOnly 'org.codehaus.mojo:animal-sniffer-annotations:1.16'
     }
-
-    signing {
-        required { !skipSigning }
-    }
 }
 
 task codeCoverageReport(type: JacocoReport, group: 'Coverage reports') {
@@ -176,10 +157,6 @@ task codeCoverageReport(type: JacocoReport, group: 'Coverage reports') {
     }
 }
 
-task printVersion {
-    println getVersionForBuild()
-}
-
 configure(subprojects.findAll {it.name != 'jaeger-thrift'}) {
    apply plugin: 'net.ltgt.errorprone'
    dependencies {
@@ -194,20 +171,6 @@ configure(subprojects.findAll {it.name != 'jaeger-thrift'}) {
             attributes('Implementation-Title': project.name, 'Implementation-Version': project.version, 'Specification-Version': project.version)
         }
     }
-}
-
-def getVersionForBuild() {
-    String candidateVersion = System.env.TRAVIS_TAG
-
-    if (null == candidateVersion || candidateVersion.isEmpty()) {
-        return ext.developmentVersion
-    }
-
-    if (Pattern.compile("[v]?((\\d+)\\.(\\d+)\\.(\\d+))(\\-RC\\d+)?").matcher(candidateVersion).matches()) {
-        return candidateVersion.drop(1)
-    }
-
-    return ext.developmentVersion
 }
 
 def getProperty(name, defaultValue) {

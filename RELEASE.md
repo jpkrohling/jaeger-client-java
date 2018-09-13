@@ -1,53 +1,38 @@
 # Release Process
 
-## Automatic release (preferred)
+This project uses [Shipkit](http://shipkit.org) for most of the release management. A release can be performed either manually or via Travis.
 
-The release process consists of these steps:
-  1. Create a pull request with:
-     * Change the version in [`build.gradle`](build.gradle) to match the release version e.g. `0.20.0`
-     * Add an entry to [`CHANGELOG`](CHANGELOG.md) with changes since the last release
-  1. Commit your `CHANGELOG` changes
-  1. Create and push tag with the new version `git tag v0.20.0 && git push origin v0.20.0`
-  1. Once the *tag* build finishes in Travis, the artifacts should have been uploaded to Sonatype staging,
-     the staging repository closed, and the artifacts on the way to Maven Central (it takes 20min+ to get there).
-     In case of failures it is safe to retry by restarting the maven-deploy job. If it keeps
-     failing, sometimes it may be necessary to close the staging repository manually.
-  1. Create a release on GitHub for the new tag. Use the changes from the `CHANGELOG` as the description.
-  1. Once the artifacts are available on Maven
-     * bump the version in `build.gradle` to `major.minor.(patch+1)-SNAPSHOT`
-     * add a new section to the CHANGELOG with that version as `(unreleased)` and a bullet point `- Nothing yet`
-     * commit with the comment "Back to development" (for example, https://github.com/jaegertracing/jaeger-client-java/commit/da9726d3ba7309947882e3c621516c70b4bc83dc)
+## Automated
 
-## Local setup and release
+Assuming we have a `version.properties` with `0.31.1` as the next version, this is what's to be done:
 
-The Travis build execute the `uploadArchives` task, and this task performs the signing of the artifacts.
-While the Travis build is ready for that, releasing locally requires the following steps:
+1. Update the `CHANGELOG.md` with the changes for `0.31.1`. Most of the changes should have been added there already, but at least the release date has to be set
+1. Get the change above merged
+1. Tag the release build, like, `git tag release/v0.31.1` and push the tag to the main repository (`git push upstream release/v0.31.1`, if your `jaegertracing/jaeger-client-java` remote is called `upstream`)
 
- * install GPG: `brew install gpg`
- * generate keys: `gpg --gen-key`
- * see installed keys with `gpg --list-keys` or `gpg --list-secret-keys`
- * create an account with Sonatype, get repo permissions (e.g. https://issues.sonatype.org/browse/OSSRH-23572)
- * create `$HOME/.gradle/gradle.properties` file or add parameters directly as it is shown at the last step.
+Once these steps are done, here's what happens:
+* Travis will trigger a `make release`
+* Our `travis/release.sh` is called, possibly updating the `version.properties` to match the release tag `0.31.1`
+* The Shipkit Gradle task `ciPerformRelease` is called, which builds, tags the version as `v0.31.1` and uploads the release `0.31.1` to Bintray
+* Bintray publishes the artifacts to Maven Central in a few minutes
+
+Not automated yet:
+* [GitHub release](https://github.com/jaegertracing/jaeger-client-java/releases)
+
+## Manual
+
+To do a manual release, you'll first need a few environment variables:
+
+* `GH_READ_TOKEN`
+* `GH_WRITE_TOKEN` (with `repo:public_repo` permission only)
+* `BINTRAY_API_KEY`
+* `BINTRAY_API_USER`
+
+Those are self-explanatory, but check the [Shipkit Getting Started](https://github.com/mockito/shipkit/blob/master/docs/getting-started.md) for more information on how to obtain those.
+
+Do everything like the "Automated" session but instead of pushing the tag to the remote repository, run:
+
+```bash
+make release
 ```
-    signing.keyId={key ID from gpg --list-secret-keys}
-    signing.password={password you used to encrypt keys via gpg --gen-key}
-    signing.secretKeyRingFile={e.g. [home path]/.gnupg/secring.gpg}
-
-    ossrhUsername={your user name at Sonatype}
-    ossrhPassword={your password at Sonatype}
-```
- * upload your public key to Ubuntu servers, e.g.
-    * `gpg --keyserver http://keyserver.ubuntu.com:11371 --send-keys {pub key ID}`
-    * you can also use Web UI and upload plain test key that you can obtain via
-      * `gpg --armor --export {your email used for the keys}`
- * Run gradle upload to Nexus. Note that it might be necessary to close and release via Nexus UI.
-    * `./gradlew upload -Psigning.keyId=<key ID from gpg --list-secret-keys> -Psigning.password=<password you used to encrypt keys via gpg --gen-key> -Psigning.secretKeyRingFile=<home/user>/.gnupg/secring.gpg -PossrhUsername=<name> -PossrhPassword=<pas>`
-
-## Closing Staging Repository Manually
-
- * https://oss.sonatype.org/, log in, go to Staging Repositories
- * In the top-right corner search box type `uber`, and find your uploaded repository
- * Hit Close button. Monitor status on Activity tab at the bottom, hitting Refresh.
- * Once Close is successful, the Release button will become available, so hit it
- * Keep hitting Refresh while sync to Maven is in progress. Once it's complete, the repository will disappear.
 
